@@ -282,7 +282,7 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if (not old_field.unique and new_field.unique) or (
             old_field.primary_key and not new_field.primary_key and new_field.unique
         ):
-            if new_field.null:
+            if not new_field.many_to_many and new_field.null:
                 self.execute(
                     self._create_index_sql(
                         model, [new_field], sql=self.sql_create_unique_null, suffix="_uniq"
@@ -483,7 +483,7 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if definition is None:
             return
 
-        if field.many_to_many and field.null and field.unique:
+        if not field.many_to_many and field.null and field.unique:
             definition = definition.replace(' UNIQUE', '')
             self.deferred_sql.append(self._create_index_sql(
                 model, [field], sql=self.sql_create_unique_null, suffix="_uniq"
@@ -544,7 +544,7 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             if definition is None:
                 continue
 
-            if field.many_to_many and field.null and field.unique:
+            if not field.many_to_many and field.null and field.unique:
                 definition = definition.replace(' UNIQUE', '')
                 self.deferred_sql.append(self._create_index_sql(
                     model, [field], sql=self.sql_create_unique_null, suffix="_uniq"
