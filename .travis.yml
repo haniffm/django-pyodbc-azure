@@ -7,7 +7,7 @@ branches:
     - azure-2.1
 
 templates:
-  mssql: &mssql DB_PACKAGES="" DATABASE_URL="mssql://SA:MyPassword42@localhost:1433/essarch?isolation_level=read committed&driver=ODBC Driver 17 for SQL Server"
+  mssql: &mssql DB_PACKAGES="" DATABASE_URL="mssql://SA:MyPassword42@localhost:1433/default?isolation_level=read committed&driver=ODBC Driver 17 for SQL Server" DATABASE_URL_OTHER="mssql://SA:MyPassword42@localhost:1433/other?isolation_level=read committed&driver=ODBC Driver 17 for SQL Server"
 
 matrix:
   include:
@@ -15,9 +15,6 @@ matrix:
       python: "3.6"
       install: pip install flake8==3.7.1
       script: flake8
-
-    - python: "3.6"
-      dist: trusty
 
     - python: "3.6"
       dist: trusty
@@ -55,4 +52,3 @@ script:
   - cd "$TRAVIS_BUILD_DIR/../django/tests"
   - pip install -r requirements/py3.txt
   - ./runtests.py --settings=testapp.settings *db* -v2
-
