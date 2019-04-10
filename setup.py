@@ -29,6 +29,9 @@ setup(
         'Django>=2.1.0,<2.2',
         'pyodbc>=3.0',
     ],
+    extras_require={
+        'tests': ['dj-database-url==0.5.0', 'tblib==1.3.2'],
+    },
     classifiers=CLASSIFIERS,
     keywords='azure django',
 )
