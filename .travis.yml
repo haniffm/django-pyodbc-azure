@@ -1,0 +1,57 @@
+sudo: required
+language: python
+cache: pip
+
+branches:
+  only:
+  - azure-1.11
+
+templates:
+  mssql: &mssql DB_PACKAGES="" DATABASE_URL="mssql://SA:MyPassword42@localhost:1433/essarch?isolation_level=read committed&driver=ODBC Driver 17 for SQL Server"
+
+matrix:
+  include:
+    - env: FLAKE8
+      python: "3.6"
+      install: pip install flake8==3.7.1
+      script: flake8
+
+    - python: "3.6"
+      dist: trusty
+
+    - python: "3.6"
+      dist: trusty
+      services: docker
+      before_install:
+        - docker pull mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+        - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=MyPassword42' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+        - curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+        - curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+        - sudo apt-get update
+        - sudo ACCEPT_EULA=Y apt-get install msodbcsql17
+      env:
+        - *mssql
+
+    - os: windows
+      language: sh
+      python: "3.6"
+      services: docker
+      before_install:
+        - docker pull christianacca/mssql-server-windows-express:1803
+        - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=MyPassword42' -p 1433:1433 -d christianacca/mssql-server-windows-express:1803
+        - choco install sqlserver-odbcdriver --version 17.3.1.1
+        - choco install python3 --version 3.6.6
+        - export PATH="/c/Python36:/c/Python36/Scripts:$PATH"
+      env:
+        - *mssql
+
+install:
+  - python -m pip install --upgrade pip wheel setuptools
+  - pip install -e .["tests$DB_PACKAGES"]
+
+script:
+  - git clone --branch=stable/1.11.x https://github.com/django/django.git "$TRAVIS_BUILD_DIR/../django" --depth=1
+  - export PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR
+  - cd "$TRAVIS_BUILD_DIR/../django/tests"
+  - ./runtests.py --settings=testapp.settings *db* -v2
+
