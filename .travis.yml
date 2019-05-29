@@ -54,4 +54,4 @@ script:
   - pip install -r requirements/py3.txt
   - export TESTS_TO_RUN=$(grep -Iriw "sql\|db" . | grep test | grep "/.*/" | cut -d"/" -f2 | sort | uniq | grep -v gis_tests)
   - echo "Will run tests in following apps $TESTS_TO_RUN"
-  - ./runtests.py --settings=testapp.settings $TESTS_TO_RUN -v2
+  - ./runtests.py --settings=testapp.settings $TESTS_TO_RUN
