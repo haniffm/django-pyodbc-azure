@@ -190,11 +190,11 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         # True               | False            | False              | True
         # True               | False            | True               | True
         if (old_field.db_index and not old_field.unique and (not new_field.db_index or new_field.unique)) or (
-            # Drop indexes on nvarchar columns that are changing to a different type
-            # SQL Server requires explicit deletion
-            (old_field.db_index or old_field.unique) and (
-            (old_type.startswith('nvarchar') and not new_type.startswith('nvarchar'))
-        )):
+                # Drop indexes on nvarchar columns that are changing to a different type
+                # SQL Server requires explicit deletion
+                (old_field.db_index or old_field.unique) and (
+                    (old_type.startswith('nvarchar') and not new_type.startswith('nvarchar'))
+                )):
             # Find the index for this field
             meta_index_names = {index.name for index in model._meta.indexes}
             # Retrieve only BTREE indexes since this is what's created with
@@ -607,7 +607,7 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
             self._sql_select_foreign_key_constraints % {
                 "table": self.quote_value(model._meta.db_table),
             },
-            has_result = True
+            has_result=True
         )
         if result:
             for table, constraint in result:

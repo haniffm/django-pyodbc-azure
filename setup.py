@@ -3,7 +3,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-CLASSIFIERS=[
+CLASSIFIERS = [
     'Development Status :: 4 - Beta',
     'License :: OSI Approved :: BSD License',
     'Framework :: Django',
