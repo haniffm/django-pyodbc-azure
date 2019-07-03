@@ -52,6 +52,4 @@ install:
 script:
   - cd "$TRAVIS_BUILD_DIR/../django/tests"
   - pip install -r requirements/py3.txt
-  - ./runtests.py --settings=testapp.settings \
-    aggregation \
-    aggregation_regress
+  - ./runtests.py --settings=testapp.settings aggregation aggregation_regress
