@@ -9,7 +9,6 @@ from django.db.backends.ddl_references import (
 )
 from django.db.models import Index
 from django.db.models.fields import AutoField, BigAutoField
-from django.db.models.fields.related import ManyToManyField
 from django.db.transaction import TransactionManagementError
 from django.utils.encoding import force_text
 

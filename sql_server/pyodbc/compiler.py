@@ -8,7 +8,7 @@ from django.db.models.functions import (
 )
 from django.db.models.sql import compiler
 from django.db.transaction import TransactionManagementError
-from django.db.utils import DatabaseError, NotSupportedError
+from django.db.utils import NotSupportedError
 
 
 def _as_sql_agv(self, compiler, connection):

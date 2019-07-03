@@ -121,14 +121,19 @@ class DatabaseOperations(BaseDatabaseOperations):
         return sql
 
     def date_trunc_sql(self, lookup_type, field_name):
+        CONVERT_YEAR = 'CONVERT(varchar, DATEPART(year, %s))' % field_name
+        CONVERT_QUARTER = 'CONVERT(varchar, 1+((DATEPART(quarter, %s)-1)*3))' % field_name
+        CONVERT_MONTH = 'CONVERT(varchar, 1+((DATEPART(quarter, %s)-1)*3))' % field_name
+
         if lookup_type == 'year':
-            return "CONVERT(datetime2, CONVERT(varchar, DATEPART(year, %s)) + '/01/01')" % field_name
+            return "CONVERT(datetime2, %s + '/01/01')" % CONVERT_YEAR
         if lookup_type == 'quarter':
-            return "CONVERT(datetime2, CONVERT(varchar, DATEPART(year, %s)) + '/' + CONVERT(varchar, 1+((DATEPART(quarter, %s)-1)*3)) + '/01')" % (field_name, field_name)
+            return "CONVERT(datetime2, %s + '/' + %s + '/01')" % (CONVERT_YEAR, CONVERT_QUARTER)
         if lookup_type == 'month':
-            return "CONVERT(datetime2, CONVERT(varchar, DATEPART(year, %s)) + '/' + CONVERT(varchar, DATEPART(month, %s)) + '/01')" % (field_name, field_name)
+            return "CONVERT(datetime2, %s + '/' + %s + '/01')" % (CONVERT_YEAR, CONVERT_MONTH)
         if lookup_type == 'week':
-            return "DATEADD(DAY, (DATEPART(weekday, %s) + 5) %%%% 7 * -1, CONVERT(datetime2, CONVERT(varchar(12), %s, 112)))" % (field_name, field_name)
+            CONVERT = "CONVERT(datetime2, CONVERT(varchar(12), %s, 112))" % field_name
+            return "DATEADD(DAY, (DATEPART(weekday, %s) + 5) %%%% 7 * -1, %s)" % (CONVERT, field_name)
         if lookup_type == 'day':
             return "CONVERT(datetime2, CONVERT(varchar(12), %s, 112))" % field_name
 
